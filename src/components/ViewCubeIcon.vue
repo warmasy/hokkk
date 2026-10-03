@@ -65,7 +65,11 @@ const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
 
 const polygons = computed(() => {
   const eye = norm(EYE)
-  const right = norm(cross([0, 0, 1], eye)) // 屏幕向右
+  // ⚠️ 世界"上方向"必须是 +Y（和 VIEW_PRESETS / 默认视角一致）。
+  // 这里以前写成了 +Z，画出来的立方体整体被"滚"了 90°，虽然面名对得上，
+  // 但涂黑的面在图标里的位置是错的（看起来就像图标和按钮对不上）。
+  const worldUp = [0, 1, 0]
+  const right = norm(cross(worldUp, eye)) // 屏幕向右
   const up = cross(eye, right) // 屏幕向上（SVG 的 y 向下，投影时取负）
   const project = (v) => [dot(v, right), -dot(v, up)]
 
