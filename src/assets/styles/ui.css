@@ -1,0 +1,333 @@
+/* ============================================================
+   UI 基础组件样式
+   1. 消息提示 / 弹窗 / 加载遮罩（配合 src/plugins/modal.js）
+   2. 属性面板表单控件
+   3. 计算结果显示
+   ============================================================ */
+
+/* ---------------- 1. 消息提示 ---------------- */
+.mc-message-container {
+  position: fixed;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+.mc-message {
+  position: relative;
+  padding: 9px 16px 9px 30px;
+  border-radius: var(--radius-lg);
+  font-size: 13px;
+  line-height: 1.4;
+  background-color: var(--bg-panel);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14);
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.2s, transform 0.2s;
+  word-break: break-word;
+  max-width: 560px;
+}
+/* 状态只用一个小圆点表示，不用左侧色条 */
+.mc-message::before {
+  content: '';
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin-top: -3.5px;
+  border-radius: 50%;
+  background-color: var(--accent);
+}
+.mc-message.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.mc-message--success::before {
+  background-color: var(--success);
+}
+.mc-message--warning::before {
+  background-color: #e6a23c;
+}
+.mc-message--error::before {
+  background-color: #f56c6c;
+}
+
+/* ---------------- 2. 确认弹窗 ---------------- */
+.mc-modal-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 3100;
+  background-color: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.mc-modal-mask.is-visible {
+  opacity: 1;
+}
+.mc-modal {
+  width: 420px;
+  max-width: 90vw;
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  transform: translateY(-12px);
+  transition: transform 0.15s;
+}
+.mc-modal-mask.is-visible .mc-modal {
+  transform: translateY(0);
+}
+.mc-modal__header {
+  padding: 14px 18px 8px;
+  font-size: 15px;
+  font-weight: bold;
+  color: var(--text-primary);
+}
+.mc-modal__body {
+  padding: 6px 18px 16px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  word-break: break-word;
+}
+.mc-modal__footer {
+  padding: 10px 18px 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.mc-btn {
+  height: 30px;
+  padding: 0 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-panel);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.mc-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.mc-btn--primary {
+  background-color: var(--accent-fill);
+  border-color: var(--accent-fill);
+  color: var(--on-accent-fill);
+}
+.mc-btn--primary:hover {
+  background-color: var(--accent-fill-hover);
+  border-color: var(--accent-fill-hover);
+  color: var(--on-accent-fill);
+}
+
+/* ---------------- 3. 加载遮罩 ---------------- */
+.mc-loading-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 3200;
+  background-color: rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.mc-loading-mask.is-visible {
+  opacity: 1;
+}
+.mc-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 22px;
+  border-radius: var(--radius-lg);
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.2);
+  font-size: 13px;
+  color: var(--text-primary);
+}
+.mc-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border-color);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: mc-spin 0.7s linear infinite;
+}
+@keyframes mc-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------------- 4. 属性面板表单 ---------------- */
+.prop-title {
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.prop-title i {
+  color: var(--accent);
+}
+.prop-empty {
+  color: var(--text-secondary);
+  font-size: 12px;
+  text-align: center;
+  padding: 20px 0;
+  line-height: 1.7;
+}
+.prop-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+  min-height: 24px;
+  flex-shrink: 0;
+}
+.prop-field > label {
+  width: 78px;
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.prop-field .prop-control {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.prop-field input,
+.prop-field select {
+  flex: 1;
+  min-width: 0;
+  height: var(--field-h);
+  padding: 0 7px;
+  font-size: var(--field-font);
+  font-family: inherit;
+  color: var(--text-primary);
+  background-color: var(--bg-body);
+  border: 1px solid var(--border-color);
+  border-radius: var(--field-radius);
+  outline: none;
+}
+.prop-field input:focus,
+.prop-field select:focus {
+  border-color: var(--accent);
+}
+.prop-field .prop-unit {
+  font-size: 11px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  min-width: 26px;
+}
+.prop-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.prop-actions button {
+  flex: 1;
+  height: 28px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-panel);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+}
+.prop-actions button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.prop-actions button.primary {
+  background-color: var(--accent-fill);
+  border-color: var(--accent-fill);
+  color: var(--on-accent-fill);
+}
+.prop-actions button.primary:hover {
+  background-color: var(--accent-fill-hover);
+  border-color: var(--accent-fill-hover);
+  color: var(--on-accent-fill);
+}
+
+/* ---------------- 5. 计算结果显示 ---------------- */
+.result-block {
+  margin-top: 10px;
+  flex-shrink: 0;
+}
+.result-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+  gap: 3px 14px;
+  border-top: 1px dashed var(--border-color);
+  padding-top: 8px;
+}
+.result-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 20px;
+}
+.result-row .result-label {
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.result-row .result-value {
+  color: var(--accent);
+  font-weight: bold;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.result-row .result-value em {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-left: 3px;
+}
+.canvas-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  pointer-events: none;
+}
+.canvas-placeholder i {
+  font-size: 40px;
+  color: var(--border-color);
+}

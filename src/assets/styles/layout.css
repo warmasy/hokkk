@@ -1,0 +1,1409 @@
+/* ============================================================
+   工作台布局样式（按设计稿还原）
+   顶部菜单 + 功能区(Ribbon) + 左中右三栏 + 状态栏
+   注意：主题相关的颜色覆盖全部放在 theme.css
+   ============================================================ */
+
+/* ---------------- 顶部标题栏 ---------------- */
+.app-header {
+  height: 40px;
+  background-color: var(--bg-panel);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  flex-shrink: 0;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  margin-right: 25px;
+  white-space: nowrap;
+}
+.logo i {
+  color: var(--accent);
+  margin-right: 8px;
+  font-size: 18px;
+}
+.menu-items {
+  display: flex;
+  gap: 20px;
+}
+.menu-items span {
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.menu-items span:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+}
+.menu-items span.active {
+  color: var(--accent);
+  background-color: var(--bg-hover);
+}
+.header-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius);
+  color: var(--icon-color);
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+.doc-link:hover {
+  background-color: var(--bg-hover);
+  color: var(--accent);
+}
+.theme-toggle {
+  cursor: pointer;
+  color: var(--icon-color);
+  font-size: 16px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+}
+.theme-toggle:hover {
+  background-color: var(--bg-hover);
+  color: var(--accent);
+}
+
+/* ---------------- 功能区 Ribbon ---------------- */
+.ribbon-toolbar {
+  display: flex;
+  align-items: stretch;
+  background-color: var(--bg-toolbar);
+  border-bottom: 1px solid var(--border-toolbar);
+  height: 105px;
+  width: 100%;
+  user-select: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  padding: 0 5px;
+  position: relative;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.ribbon-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 4px 8px;
+  border-right: 1px solid var(--border-toolbar);
+  flex-shrink: 0;
+}
+.ribbon-group:last-child {
+  border-right: none;
+}
+.ribbon-buttons {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  height: 80px;
+  align-content: flex-start;
+  gap: 2px 8px;
+}
+.ribbon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  height: 24px;
+  padding: 0 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-family: inherit;
+  transition: background 0.1s, border-color 0.1s, box-shadow 0.15s;
+}
+.ribbon-btn:hover {
+  background-color: var(--bg-toolbar-hover);
+}
+.ribbon-btn.active {
+  background-color: var(--bg-toolbar-active);
+  border-color: var(--accent);
+}
+.ribbon-btn i {
+  font-size: 14px;
+  color: var(--icon-color);
+  width: 16px;
+  text-align: center;
+}
+.ribbon-btn.active i {
+  color: var(--accent);
+}
+.ribbon-btn span {
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.ribbon-btn-lg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 78px;
+  padding: 4px;
+  gap: 6px;
+  text-align: center;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  cursor: pointer;
+  background: transparent;
+  font-size: 11px;
+  font-family: inherit;
+  color: var(--text-primary);
+  transition: background 0.1s, border-color 0.1s, box-shadow 0.15s;
+}
+.ribbon-btn-lg i {
+  font-size: 22px;
+  color: var(--icon-color);
+}
+.ribbon-btn-lg:hover {
+  background-color: var(--bg-toolbar-hover);
+}
+.ribbon-btn-lg.active {
+  background-color: var(--bg-toolbar-active);
+  border-color: var(--accent);
+}
+.ribbon-btn-lg.active i {
+  color: var(--accent);
+}
+
+.ribbon-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: var(--text-secondary);
+  height: 16px;
+  margin-top: auto;
+  white-space: nowrap;
+}
+
+/* 更多（下拉收纳） */
+.ribbon-group-more {
+  position: relative;
+  margin-left: auto;
+  border-right: none;
+  border-left: 1px solid var(--border-toolbar);
+}
+.ribbon-buttons-more {
+  height: 80px;
+  justify-content: flex-start;
+  align-content: flex-start;
+}
+.ribbon-more-btn {
+  position: relative;
+  z-index: 2;
+}
+.ribbon-more-panel {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  min-width: 260px;
+  max-width: 480px;
+  max-height: 70vh;
+  overflow-y: auto;
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+  padding: 8px;
+  z-index: 200;
+  white-space: normal;
+}
+.ribbon-more-panel.open {
+  display: block;
+}
+.ribbon-more-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ribbon-more-inner .ribbon-group {
+  border-right: none;
+  border-bottom: 1px solid var(--border-toolbar);
+  padding: 6px 4px 8px;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+}
+.ribbon-more-inner .ribbon-group:last-child {
+  border-bottom: none;
+}
+.ribbon-more-inner .ribbon-buttons {
+  flex-direction: row;
+  flex-wrap: wrap;
+  height: auto;
+  align-content: flex-start;
+  gap: 2px 6px;
+}
+.ribbon-more-inner .ribbon-label {
+  order: -1;
+  writing-mode: vertical-lr;
+  height: auto;
+  margin: 0;
+  padding: 0 2px;
+  color: var(--text-secondary);
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+/* ---------------- 主体三栏 ---------------- */
+.main-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* 左侧面板 */
+.left-panel {
+  width: 260px;
+  background-color: var(--bg-panel);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  min-width: 0;
+}
+.panel-header {
+  height: 30px;
+  background-color: var(--bg-body);
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  font-size: 12px;
+  font-weight: bold;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+.project-tree {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 8px;
+  min-height: 0;
+}
+.tree-node {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 30px;
+  padding: 0 8px;
+  cursor: pointer;
+  color: var(--text-primary);
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+  font-size: 13px;
+}
+.tree-node + .tree-node {
+  margin-top: 2px;
+}
+.tree-node:hover {
+  background-color: var(--bg-hover);
+}
+.tree-node i {
+  color: var(--icon-color);
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+  font-size: 13px;
+}
+.tree-folder i {
+  color: #d9a441;
+  font-size: 14px;
+}
+.tree-folder:hover i {
+  color: #e8b354;
+}
+.tree-item i {
+  color: var(--accent);
+}
+.tree-folder > .tree-label {
+  font-weight: 500;
+}
+/* 当前"新功能默认落点"的文件夹：给个轻微提示（点名字只是切换落点，不折叠） */
+.tree-folder.is-active-folder > .tree-label {
+  color: var(--accent);
+}
+.folder-toggle {
+  cursor: pointer;
+}
+.tree-indent {
+  padding-left: 32px;
+}
+.tree-node.selected {
+  background-color: var(--tree-selected-bg);
+  border: 1px solid var(--tree-selected-border);
+  color: var(--accent);
+  font-weight: 500;
+}
+.tree-node.selected i {
+  color: var(--accent);
+}
+.tree-node.selected:hover {
+  background-color: var(--tree-selected-bg);
+  filter: brightness(0.97);
+}
+.dark-theme .tree-node.selected:hover {
+  filter: brightness(1.15);
+}
+
+/* 属性面板 */
+.property-panel {
+  height: 250px;
+  border-top: 1px solid var(--border-color);
+  padding: 10px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+/* 中间画布 */
+.center-canvas {
+  flex: 1;
+  background-color: var(--bg-panel);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+.chart-container {
+  flex: 1;
+  padding: 20px;
+  position: relative;
+  min-height: 0;
+}
+/* 计算框内的图表工具条：放在曲线区标题行右侧，不遮挡曲线 */
+.calc-window__section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+  min-height: 24px;
+}
+.calc-window__section-head .calc-window__section-title {
+  margin-bottom: 0;
+}
+/* 悬停读数：放在标题行里，不遮挡曲线 */
+.chart-readout {
+  margin-left: auto;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--marker);
+  background-color: var(--bg-body);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 1px 8px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.chart-readout em {
+  font-style: normal;
+  color: var(--text-secondary);
+  border-right: 1px solid var(--border-color);
+  padding-right: 6px;
+}
+.chart-toolbar {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.chart-toolbar button {
+  width: 22px;
+  height: 22px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--icon-color);
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.chart-toolbar button:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--border-color);
+  color: var(--accent);
+}
+
+/* 右侧面板 */
+.right-panel {
+  width: 320px;
+  background-color: var(--bg-panel);
+  border-left: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  min-width: 0;
+}
+.ai-assistant {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.ai-header {
+  padding: 10px;
+  background-color: var(--bg-body);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+.ai-header i {
+  color: var(--accent);
+}
+.ai-chat {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+}
+.chat-message {
+  max-width: 85%;
+  padding: 10px 12px;
+  border-radius: var(--radius-lg);
+  font-size: 12px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+.chat-message.user {
+  background-color: var(--accent-fill);
+  color: var(--on-accent-fill);
+  align-self: flex-end;
+  border-bottom-right-radius: 2px;
+}
+.chat-message.ai {
+  background-color: var(--bg-body);
+  border: 1px solid var(--border-color);
+  align-self: flex-start;
+  border-bottom-left-radius: 2px;
+}
+.chat-message.typing {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+.ai-input-area {
+  padding: 10px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.ai-input-area input {
+  flex: 1;
+  height: var(--field-h);
+  background-color: var(--bg-body);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0 8px;
+  border-radius: var(--field-radius);
+  outline: none;
+  font-family: inherit;
+  font-size: var(--field-font);
+  min-width: 0;
+}
+.ai-input-area input:focus {
+  border-color: var(--accent);
+}
+.ai-input-area button {
+  background-color: var(--accent-fill);
+  border: none;
+  color: var(--on-accent-fill);
+  padding: 0 14px;
+  height: var(--field-h);
+  border-radius: var(--field-radius);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.ai-input-area button:hover {
+  background-color: var(--accent-fill-hover);
+}
+
+/* ---------------- 状态栏 ---------------- */
+.status-bar {
+  height: 26px;
+  background-color: var(--bg-panel);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.status-left,
+.status-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.status-right i {
+  cursor: pointer;
+}
+.status-right i:hover {
+  color: var(--accent);
+}
+
+/* ---------------- 中间区域：计算框（浮动窗口） ----------------
+   空着的时候铺一层"工程图纸"细网格（20px 主格 + 100px 副格），
+   颜色随主题走（浅色极淡、深色微亮、科技蓝带一点蓝），空栏就不再显得空旷。 */
+.window-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background-color: var(--bg-body);
+  background-image:
+    linear-gradient(to right, var(--grid-line-major) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line-major) 1px, transparent 1px),
+    linear-gradient(to right, var(--grid-line-minor) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line-minor) 1px, transparent 1px);
+  background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+  background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+}
+.calc-window {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.14);
+  overflow: hidden;
+  /* 入场：从"被点击的那个按钮/卡片"位置放大出现（--mc-in-dx/dy 由 CalcWindow 写入），
+     并且缩放锚点朝向来处，视觉上就是"从这里长出来"，不再突兀 */
+  transform-origin: var(--mc-in-origin, 50% 0%);
+  animation: mc-window-in 190ms cubic-bezier(0.16, 0.84, 0.24, 1);
+}
+@keyframes mc-window-in {
+  from {
+    transform: translate(var(--mc-in-dx, 0px), var(--mc-in-dy, 0px)) scale(0.93);
+    opacity: 0;
+  }
+  60% {
+    opacity: 1;
+  }
+  to {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+}
+.calc-window.is-minimizing {
+  pointer-events: none;
+}
+/* 当前操作的窗口（左侧目录树里也同步高亮那个标签）：边框 + 标题栏都提亮，一眼能认出 */
+.calc-window.active {
+  border-color: var(--accent);
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.2);
+}
+.calc-window.active > .calc-window__header {
+  background-color: var(--bg-toolbar-active);
+  border-bottom-color: var(--accent);
+}
+/* 被激活 / 被目录树点名时的高亮圈：独立一层做动画，不动窗口本体的动画属性 */
+.calc-window__pulse {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border: 2px solid var(--accent);
+  border-radius: inherit;
+  pointer-events: none;
+  animation: mc-window-pulse 700ms ease-out forwards;
+}
+@keyframes mc-window-pulse {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+/* 拖动时的吸附提示线（挂在 .window-layer 上，松手移除） */
+.mc-snap-line {
+  position: absolute;
+  z-index: 9000;
+  pointer-events: none;
+  background-color: var(--accent);
+  opacity: 0.75;
+}
+.mc-snap-line--v {
+  top: 0;
+  bottom: 0;
+  width: 1px;
+}
+.mc-snap-line--h {
+  left: 0;
+  right: 0;
+  height: 1px;
+}
+/* 拖动窗口期间：全程保持"移动"光标，并禁止选中文字（这样拖动才跟手、不脏） */
+body.mc-window-moving,
+body.mc-window-moving * {
+  cursor: move !important;
+  user-select: none !important;
+}
+/* 标题栏与右下角手柄用更贴切的光标 */
+.calc-window__header {
+  cursor: move;
+}
+/* 固定在最上层的窗口：给个更明显的边框与阴影，一眼能认出 */
+.calc-window.is-pinned {
+  border-color: var(--accent);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.24);
+}
+.calc-window__btn.pin.active {
+  color: var(--accent);
+  background-color: var(--bg-toolbar-active);
+}
+.calc-window__btn.pin.active:hover {
+  color: var(--accent);
+  background-color: var(--bg-toolbar-hover);
+}
+.calc-window__header {
+  height: 32px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 6px 0 10px;
+  background-color: var(--bg-toolbar);
+  border-bottom: 1px solid var(--border-color);
+  cursor: move;
+  user-select: none;
+  font-size: 12px;
+  font-weight: bold;
+}
+.calc-window__header > i {
+  color: var(--accent);
+  font-size: 13px;
+}
+.calc-window__title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.calc-window__subtitle {
+  font-weight: normal;
+  font-size: 11px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.calc-window__spacer {
+  flex: 1;
+}
+.calc-window__btn {
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: transparent;
+  color: var(--icon-color);
+  cursor: pointer;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+}
+.calc-window__btn:hover {
+  background-color: var(--bg-toolbar-hover);
+  color: var(--text-primary);
+}
+.calc-window__btn.close:hover {
+  background-color: #f56c6c;
+  color: #fff;
+}
+.calc-window__body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: 12px;
+  padding: 10px 12px;
+  overflow: auto;
+}
+/* 左：参数 + 结果 */
+.calc-window__left {
+  width: 268px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+.calc-window__body.no-chart .calc-window__left {
+  width: 100%;
+}
+/* 右：图表 */
+.calc-window__right {
+  flex: 1;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-left: 1px solid var(--border-color);
+  padding-left: 12px;
+}
+.calc-window__section-title {
+  font-size: 11px;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+.calc-window__chart {
+  flex: 1;
+  min-height: 120px;
+  position: relative;
+}
+.calc-window__hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  padding: 4px 2px;
+}
+.calc-window__hint.error {
+  color: #f56c6c;
+}
+.calc-window__hint.warn {
+  color: #e6a23c;
+  line-height: 1.5;
+  align-items: flex-start;
+}
+.calc-window__hint.warn i {
+  margin-top: 2px;
+}
+/* 没有可绘制点时的图内提示 */
+.calc-window__chart-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 18px;
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  background-color: var(--bg-panel);
+  opacity: 0.92;
+  pointer-events: none;
+}
+
+.calc-window__desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed var(--border-color);
+}
+.calc-window__footer {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 8px 12px;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--bg-body);
+}
+.calc-window__footer button {
+  height: var(--field-h);
+  min-width: 68px;
+  padding: 0 14px;
+  border-radius: var(--field-radius);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-panel);
+  color: var(--text-primary);
+  font-size: var(--field-font);
+  font-family: inherit;
+  cursor: pointer;
+}
+.calc-window__footer button.primary {
+  min-width: 88px;
+}
+.calc-window__footer button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.calc-window__footer button.primary {
+  background-color: var(--accent-fill);
+  border-color: var(--accent-fill);
+  color: var(--on-accent-fill);
+}
+.calc-window__footer button.primary:hover {
+  background-color: var(--accent-fill-hover);
+  border-color: var(--accent-fill-hover);
+  color: var(--on-accent-fill);
+}
+/* ---------------- 尺寸调整把手（四边 + 四角，和 Windows 一样随便拉） ---------------- */
+.calc-window__rz {
+  position: absolute;
+  z-index: 3;
+}
+.calc-window__rz.rz-n,
+.calc-window__rz.rz-s {
+  left: 8px;
+  right: 8px;
+  height: 5px;
+  cursor: ns-resize;
+}
+.calc-window__rz.rz-n {
+  top: 0;
+}
+.calc-window__rz.rz-s {
+  bottom: 0;
+}
+.calc-window__rz.rz-w,
+.calc-window__rz.rz-e {
+  top: 8px;
+  bottom: 8px;
+  width: 5px;
+  cursor: ew-resize;
+}
+.calc-window__rz.rz-w {
+  left: 0;
+}
+.calc-window__rz.rz-e {
+  right: 0;
+}
+.calc-window__rz.rz-nw,
+.calc-window__rz.rz-ne,
+.calc-window__rz.rz-sw,
+.calc-window__rz.rz-se {
+  width: 12px;
+  height: 12px;
+}
+.calc-window__rz.rz-nw {
+  top: 0;
+  left: 0;
+  cursor: nwse-resize;
+}
+.calc-window__rz.rz-ne {
+  top: 0;
+  right: 0;
+  cursor: nesw-resize;
+}
+.calc-window__rz.rz-sw {
+  bottom: 0;
+  left: 0;
+  cursor: nesw-resize;
+}
+.calc-window__rz.rz-se {
+  bottom: 0;
+  right: 0;
+  cursor: nwse-resize;
+  /* 右下角给个和原来一样的小标记，提示可以拉 */
+  background: linear-gradient(135deg, transparent 0 50%, var(--border-color) 50% 100%);
+}
+
+/* ---------------- 单位换算面板 ---------------- */
+.unit-panel {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+/* 面板内容不参与压缩，保证按真实内容高度自动适配窗口 */
+.unit-panel > * {
+  flex-shrink: 0;
+}
+/* 设置区：数值 + 源单位 + 交换 + 目标单位，全部在一行且三个控件等宽 */
+.unit-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.unit-row input,
+.unit-row select {
+  flex: 1 1 0;
+  min-width: 0;
+  height: var(--field-h);
+  padding: 0 14px;
+  font-size: var(--field-font);
+  font-family: inherit;
+  color: var(--text-primary);
+  background-color: var(--bg-body);
+  border: 1px solid var(--border-color);
+  border-radius: var(--field-radius);
+  outline: none;
+  text-align: center;
+  text-align-last: center;
+}
+.unit-row input {
+  padding: 0 7px;
+}
+/* 自绘下拉箭头：去掉系统箭头后，文字才能真正左右居中 */
+.unit-row select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--icon-color) 50%),
+    linear-gradient(135deg, var(--icon-color) 50%, transparent 50%);
+  background-position: calc(100% - 10px) center, calc(100% - 6px) center;
+  background-size: 4px 4px, 4px 4px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+.unit-row input:focus,
+.unit-row select:focus {
+  border-color: var(--accent);
+}
+.unit-swap {
+  flex: 0 0 auto;
+  width: var(--field-h);
+  height: var(--field-h);
+  border: 1px solid var(--border-color);
+  border-radius: var(--field-radius);
+  background-color: var(--bg-panel);
+  color: var(--icon-color);
+  cursor: pointer;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.unit-swap:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+/* 点击时图标转半圈，给出即时反馈 */
+.unit-swap i {
+  transition: transform 0.3s ease;
+}
+.unit-swap i.spin {
+  transform: rotate(180deg);
+}
+/* 主结果：正常高度的一行，内容上下左右都居中 */
+.unit-result {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: var(--field-radius);
+  background-color: var(--bg-body);
+  border: 1px solid var(--border-color);
+  line-height: 1;
+}
+.unit-result__expr {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.unit-result__eq {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.unit-result__value {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.unit-result__unit {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+/* 全部单位换算表：单列，名称 + 引导点 + 居中数值列（所有数值在同一列上对齐） */
+.unit-table {
+  display: flex;
+  flex-direction: column;
+}
+.unit-table__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 22px;
+  padding: 0 8px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+.unit-table__head span:first-child {
+  flex: 1;
+}
+.unit-table__head span:last-child {
+  width: 96px;
+  flex: 0 0 auto;
+  text-align: center;
+}
+.unit-table__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: var(--field-radius);
+  border-bottom: 1px dashed var(--border-color);
+}
+/* 前两行（原单位 / 目标单位）用原来的蓝色高亮底色 */
+.unit-table__row.is-highlight {
+  background-color: var(--bg-toolbar-active);
+}
+.unit-table__name {
+  font-size: var(--field-font);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 45%;
+}
+.unit-table__row.is-highlight .unit-table__name {
+  color: var(--accent);
+}
+/* 引导点：让“名称 — 数值”的间距看起来是有意为之，而不是空白 */
+.unit-table__leader {
+  flex: 1;
+  height: 1px;
+  border-bottom: 1px dotted var(--border-color);
+  margin-bottom: 4px;
+  min-width: 12px;
+}
+.unit-table__num {
+  width: 96px;
+  flex: 0 0 auto;
+  font-size: var(--field-font);
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.unit-table__row.is-highlight .unit-table__num {
+  color: var(--accent);
+  font-weight: bold;
+}
+
+/* ---------------- 函数绘图面板 ---------------- */
+.calc-window__expr {
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 12px;
+  color: var(--text-primary);
+  background-color: var(--bg-body);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 5px 8px;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+/* ---------------- 浏览树：拖放相关 ---------------- */
+.tree-folder .tree-label,
+.tree-item .tree-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tree-count {
+  font-size: 10px;
+  color: var(--text-secondary);
+  background-color: var(--bg-hover);
+  border-radius: var(--radius-lg);
+  padding: 0 6px;
+  flex-shrink: 0;
+}
+.tree-folder.drop-target {
+  background-color: var(--tree-selected-bg);
+  border: 1px dashed var(--tree-selected-border);
+}
+.tree-item {
+  padding-right: 30px;
+  cursor: grab;
+  touch-action: none;
+}
+.tree-item:active {
+  cursor: grabbing;
+}
+.tree-item.dragging {
+  opacity: 0.45;
+}
+/* 标签数量上限弹窗里勾选的"要删除"标签：目录树同步高亮 + 右侧打勾
+   （刻意不加删除线，只做底色高亮 + 打勾） */
+.tree-item.is-marked {
+  background-color: var(--tree-selected-bg);
+  border: 1px dashed var(--tree-selected-border);
+}
+.tree-item.is-marked .mark-icon {
+  color: var(--accent);
+  font-size: 13px;
+  flex-shrink: 0;
+  margin-left: 4px;
+  padding-right: 26px; /* 给 hover 时出现的 × 让位 */
+}
+/* 拖动中全局禁止选中文本，避免拖拽发虚 */
+body.mc-dragging,
+body.mc-dragging * {
+  user-select: none !important;
+  cursor: grabbing !important;
+}
+.rename-input {
+  flex: 1;
+  min-width: 0;
+  height: 20px;
+  padding: 0 4px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--text-primary);
+  background-color: var(--bg-panel);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  outline: none;
+}
+
+/* ---------------- 模型查看（3D） ---------------- */
+.model-canvas {
+  position: relative;
+  overflow: hidden;
+}
+/* 原项目查看器的页面容器与卡片在这里被“摊平”：直接铺满中栏，不要卡片边框、不要内边距、不要外阴影 */
+body .model-canvas .model-card-page {
+  padding: 0 !important;
+  background: transparent !important;
+  height: 100% !important;
+}
+body .model-canvas .model-card {
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  height: 100% !important;
+}
+/* O3DV 自带的顶栏 / 左侧导航 / 右侧设置栏 / 首页：本项目的功能区与左右面板取代它们 */
+/* O3DV 自带的顶栏 / 导航器 / 侧栏 / 首页：本项目的功能区与面板取代它们 */
+.model-canvas .o3dv-root > .header,
+.model-canvas .o3dv-root .main_left_container,
+.model-canvas .o3dv-root .main_right_container,
+.model-canvas .o3dv-root #intro {
+  display: none !important;
+}
+.model-canvas .o3dv-root {
+  width: 100%;
+  height: 100%;
+}
+.model-canvas .o3dv-root .main {
+  height: 100%;
+}
+.model-canvas .o3dv-root .main_viewer {
+  width: 100%;
+  height: 100%;
+}
+.model-canvas .o3dv-root canvas {
+  display: block;
+  outline: none;
+  /* 去掉 canvas 自带的 1px 边框（这就是看起来像卡片的那条线） */
+  border: none !important;
+  border-radius: 0 !important;
+  /* 去掉 O3DV 默认给画布的上下 10px 外边距：中栏要完全铺满，不留上下留白 */
+  margin: 0 !important;
+}
+/* ---------------- 模型查看：彻底无卡片（边框/背景/阴影/内边距/圆角全部清掉） ---------------- */
+.model-canvas .model-card-page,
+.model-canvas .model-card,
+.model-canvas .o3dv-root,
+.model-canvas .o3dv-root .main,
+.model-canvas .o3dv-root .main_viewer,
+.model-canvas .o3dv-root .viewer,
+.model-canvas .o3dv-root > div {
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background-color: transparent !important;
+}
+
+/* ---------------- 模型查看：O3DV 自带面板（详情 / 设置）浮层 ----------------
+   注意：**不要**给 .main_right_container / .main_left_container 任何可见宽度。
+   O3DV 的 Layouter 用 "main 宽度 - 左容器宽度 - 右容器宽度" 算画布宽度，
+   容器一旦有宽度，画布就会变窄且不会自动恢复（表现为"界面变小"）。
+   面板元素由 src/viewer/o3dvPanels.js 搬到 .o3dv-root 内自建的 position:fixed 浮层里，
+   浮层样式在 views/model-viewer/styles/o3dv-fixes.css。 */
+
+/* 零件树里被隐藏的零件 */
+.tree-item.is-hidden-part .tree-label {
+  color: var(--text-secondary);
+  text-decoration: line-through;
+}
+
+/* ---------------- 拖拽幽灵标签 ---------------- */
+/* ---------------- 拖拽幽灵标签 ---------------- */
+.ptr-ghost {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 5000;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--on-accent-fill);
+  background-color: var(--accent-fill);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+  opacity: 0.92;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* ---------------- 右键菜单 ---------------- */
+.ctx-menu {
+  position: fixed;
+  z-index: 4000;
+  min-width: 140px;
+  padding: 4px;
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+}
+.ctx-menu__title {
+  padding: 4px 10px 6px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 4px;
+}
+.ctx-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 26px;
+  padding: 0 10px;
+  font-size: 12px;
+  color: var(--text-primary);
+  border-radius: var(--radius);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.ctx-menu__item i {
+  width: 12px;
+  text-align: center;
+  color: var(--icon-color);
+  font-size: 11px;
+}
+.ctx-menu__item:hover {
+  background-color: var(--bg-hover);
+  color: var(--accent);
+}
+.ctx-menu__item:hover i {
+  color: var(--accent);
+}
+.ctx-menu__item.danger:hover {
+  color: #f56c6c;
+}
+.ctx-menu__item.danger:hover i {
+  color: #f56c6c;
+}
+.ctx-menu__sep {
+  height: 1px;
+  margin: 4px 6px;
+  background-color: var(--border-color);
+}
+.tree-item .node-actions {
+  position: absolute;
+  right: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: none;
+  align-items: center;
+}
+.tree-item:hover .node-actions {
+  display: flex;
+}
+.tree-node .node-actions i {
+  font-size: 14px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+}
+.tree-node .node-actions i:hover {
+  color: #f56c6c;
+  background-color: var(--bg-hover);
+}
+.tree-item.drag-over-top::before,
+.tree-item.drag-over-bottom::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  height: 2px;
+  background-color: var(--accent);
+  border-radius: 1px;
+}
+.tree-item.drag-over-top::before {
+  top: -1px;
+}
+.tree-item.drag-over-bottom::after {
+  bottom: -1px;
+}
+.tree-tip {
+  margin-top: 14px;
+  padding: 0 6px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.9;
+}
+.canvas-placeholder__sub {
+  font-size: 11px;
+  color: var(--text-secondary);
+  opacity: 0.85;
+}
+
+/* O3DV 的颜色选择器（Pickr）会挂到 body 下，未使用时隐藏，避免页面底部漏出面板 */
+body > .pcr-app { display: none !important; }
+body > .pcr-app.visible { display: flex !important; }

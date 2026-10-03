@@ -1,0 +1,27 @@
+{
+  "name": "qingxuanshi",
+  "version": "1.0.0",
+  "description": "清玄侍：工作台式布局 + 功能区 + 三栏主体 + 状态栏",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.7.2",
+    "axios": "^1.20.0",
+    "chart.js": "^4.5.1",
+    "file-saver": "^2.0.5",
+    "js-cookie": "^3.0.8",
+    "nprogress": "^0.2.0",
+    "pinia": "^3.0.4",
+    "vue": "^3.5.43",
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.9",
+    "vite": "^7.3.6"
+  }
+}
