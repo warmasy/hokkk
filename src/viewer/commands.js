@@ -10,7 +10,7 @@ import { saveAs } from 'file-saver'
 import { modelViewer, VIEW_PRESETS, BACKGROUND_PRESETS } from '@/viewer/modelController'
 import { triggerInPanel, findControl, triggerControl } from '@/viewer/o3dvControls'
 import { togglePanelOverlay } from '@/viewer/o3dvPanels'
-import { notifyViewerStateChanged } from '@/viewer/viewerState'
+import { notifyViewerStateChanged, readViewerState } from '@/viewer/viewerState'
 import { useModelViewStore } from '@/store/modules/modelView'
 import { useWorkbenchStore } from '@/store/modules/workbench'
 import modal from '@/plugins/modal'
@@ -246,11 +246,27 @@ export const VIEWER_COMMANDS = {
     return true
   },
 
-  /** 自由旋转（不锁定上方向，可任意翻转观察） */
+  /**
+   * 导航模式切换（原来是单向切到"自由旋转"，斜着拖会带着滚转，看起来像"螺旋"）：
+   *   锁定上方向 = 正常转动（水平拖绕竖直轴转、竖直拖俯仰，地平线永远水平）——默认
+   *   自由旋转   = 任意翻转（绕相机轴转，斜着拖会滚转）
+   * 按钮高亮 = 当前处于自由旋转（state: upFixed:false）
+   */
   freeOrbit() {
     const { view } = stores()
-    const ok = triggerControl('freeOrbit')
-    view.setMessage(ok ? '已切换为自由旋转' : '自由旋转当前不可用')
+    // O3DV 的 NavigationMode：1 = 固定向上向量（正常转动），2 = 自由旋转
+    const cur = modelViewer.getNavigationMode ? modelViewer.getNavigationMode() : null
+    const toFree = cur !== 2
+    const ok =
+      (modelViewer.setNavigationMode && modelViewer.setNavigationMode(toFree ? 'free' : 'fixed')) ||
+      triggerControl(toFree ? 'freeOrbit' : 'fixUp')
+    view.setMessage(
+      ok
+        ? toFree
+          ? '已切换为自由旋转（可任意翻转；想恢复正常转动再点一次）'
+          : '已锁定上方向（正常转动）'
+        : '导航模式切换当前不可用'
+    )
     return true
   },
 

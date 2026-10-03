@@ -399,6 +399,23 @@ export const modelViewer = {
     return true
   },
 
+  /**
+   * 导航模式：'fixed' = 锁定上方向（正常转动，地平线永远水平）/ 'free' = 自由旋转（斜着拖会滚转）
+   * O3DV 的 NavigationMode 枚举：1 = FixedUp，2 = FreeOrbit
+   * 直接走引擎 API，不依赖点击它自带工具栏（那些 div 按钮对 .click() 不响应）
+   */
+  getNavigationMode() {
+    return call(site()?.viewer, 'GetNavigationMode')
+  },
+  setNavigationMode(mode) {
+    const viewer = site()?.viewer
+    if (typeof viewer?.SetNavigationMode !== 'function') return false
+    viewer.SetNavigationMode(mode === 'free' ? 2 : 1)
+    call(viewer, 'Render')
+    this._emit('navigationModeChanged', mode)
+    return true
+  },
+
   /** 向上轴 */
   setUpAxis(axis) {
     const viewer = site()?.viewer

@@ -1,6 +1,8 @@
 // 模型显示优化 Composable
 // 负责：默认清晰边线显示、导航器中文名乱码修复、默认视角/投影、回到 intro 界面
 
+import { findControl } from '@/viewer/o3dvControls'
+
 // 默认开启清晰边线显示：
 // - Show Edges 打开（O3DV 默认关闭，模型看着"糊"）
 // - Edge Color 默认 50（RGB(50,50,50) 深灰）
@@ -228,21 +230,23 @@ export function setDefaultOrthographic() {
   } catch (e) { /* ignore */ }
 }
 
-// 默认自动选中"自由旋转"导航模式（点击工具栏"自由旋转"按钮完成切换，
-// 让 O3DV 处理选中状态与模式设置）
-export function setDefaultFreeOrbit() {
+// 默认导航模式 = **锁定上方向（正常转动）**：
+// 水平拖 → 绕竖直轴转，竖直拖 → 俯仰，地平线始终水平。
+// 之前默认的是"自由旋转"（绕相机轴转），斜着拖动会带上滚转，看起来就像模型在螺旋翻转，
+// 所以改成默认锁定；想要任意翻转的话点功能区「相机 → 自由旋转」切换（再点一次恢复）。
+export function setDefaultFixedUp() {
   const ws = window.o3dvWebsite
   if (!ws || !ws.viewer) return
   try {
-    if (ws.viewer.GetNavigationMode && ws.viewer.GetNavigationMode() === 2) return
-    const toolbar = document.getElementById('toolbar')
-    const freeBtn = toolbar ? Array.from(toolbar.querySelectorAll('.ov_toolbar_button'))
-      .find(b => (b.getAttribute('alt') || '').trim() === '自由旋转') : null
-    if (freeBtn) {
-      freeBtn.click()
-    } else if (ws.viewer.SetNavigationMode) {
-      ws.viewer.SetNavigationMode(2)
+    // GetNavigationMode：1 = 锁定上方向，2 = 自由旋转
+    if (ws.viewer.GetNavigationMode && ws.viewer.GetNavigationMode() === 1) return
+    if (typeof ws.viewer.SetNavigationMode === 'function') {
+      ws.viewer.SetNavigationMode(1)
+      if (typeof ws.viewer.GetNavigationMode !== 'function' || ws.viewer.GetNavigationMode() === 1) return
     }
+    // 兜底：走 O3DV 自带控件
+    const ctrl = findControl('fixUp')
+    if (ctrl && typeof ctrl.click === 'function') ctrl.click()
   } catch (e) { /* ignore */ }
 }
 

@@ -59,7 +59,7 @@ export const MODEL_CAMERA_GROUP = {
     { key: 'mv-perspective', label: '透视', icon: 'fa-solid fa-camera', kind: 'action', action: 'viewer', command: 'projection', args: { mode: 'perspective' }, state: 'projection:perspective', tip: '透视投影（近大远小）' },
     { key: 'mv-ortho', label: '正交', icon: 'fa-solid fa-camera-retro', kind: 'action', action: 'viewer', command: 'projection', args: { mode: 'orthographic' }, state: 'projection:orthographic', tip: '正交投影（工程图习惯）' },
     { key: 'mv-flipup', label: '翻转上下', icon: 'fa-solid fa-arrows-rotate', kind: 'action', action: 'viewer', command: 'flipUpVector', tip: '模型上下颠倒时翻转向上向量' },
-    { key: 'mv-freeorbit', label: '自由旋转', icon: 'fa-solid fa-unlock', kind: 'action', action: 'viewer', command: 'freeOrbit', state: 'upFixed:false', tip: '不锁定上方向，可任意翻转观察' }
+    { key: 'mv-freeorbit', label: '自由旋转', icon: 'fa-solid fa-unlock', kind: 'action', action: 'viewer', command: 'freeOrbit', state: 'upFixed:false', tip: '切换导航模式：正常转动（锁定上方向，默认）↔ 自由旋转（斜着拖会滚转）；高亮表示当前是自由旋转' }
   ]
 }
 

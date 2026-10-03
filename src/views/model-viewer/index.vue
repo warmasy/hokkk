@@ -76,7 +76,7 @@ import { onBeforeUnmount } from 'vue'
 
 import './styles/o3dv-fixes.css'
 import { useO3dvViewer, syncCardTheme, loadExampleModel } from './composables/useO3dvViewer.js'
-import { applyClearEdges, fixGarbledModelNames, restartWithIntro, setSolidWorksDefaultView, setDefaultOrthographic, setDefaultFreeOrbit, customizeUpAxisButtons, hasValidBoundingSphere } from './composables/useModelDisplay.js'
+import { applyClearEdges, fixGarbledModelNames, restartWithIntro, setSolidWorksDefaultView, setDefaultOrthographic, setDefaultFixedUp, customizeUpAxisButtons, hasValidBoundingSphere } from './composables/useModelDisplay.js'
 import { initAxisIndicator, updateAxisIndicatorTheme, disposeAxisIndicator } from './composables/useAxisIndicator.js'
 import { initMeshColor, disposeMeshColor, recordInitialColors, restoreMeshColors } from './composables/useMeshColor.js'
 
@@ -176,7 +176,7 @@ function applyDefaultViewWhenReady() {
 function handleModelLoaded() {
   applyClearEdges()
   setDefaultOrthographic()
-  setDefaultFreeOrbit() // 默认自动选中自由旋转
+  setDefaultFixedUp() // 默认锁定上方向（正常转动，不会斜着拖出滚转）
   triggerO3dvResize()
   applyDefaultViewWhenReady()
   fixGarbledModelNames()
