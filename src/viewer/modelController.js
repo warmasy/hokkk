@@ -12,15 +12,25 @@
 import { ensureO3dvAssets, releaseO3dvAssets, O3DV_PATHS } from './o3dvLoader'
 import { triggerInPanel } from './o3dvControls'
 
-/** 标准视角（Z 轴向上的工程习惯） */
+/**
+ * 标准视角。
+ *
+ * ⚠️ 坐标约定（本项目的 3D 视图统一按这套来，改之前先对齐）：
+ *   - **Y 轴向上**（和默认视角 / SolidWorks 风格默认视角一致，`setSolidWorksDefaultView` 用的就是 up = (0,1,0)）
+ *   - **+Z 是正前方**（默认等轴测相机的方向是 (+X, +Y, +Z)，也就是从"前-右-上"看模型，所以正视图=相机在 +Z）
+ *   - +X 向右
+ * 六面视角都按这个约定给 dir（相机相对模型中心的方向）与 up（画面上方向）：
+ *   正视 = +Z、后视 = -Z、左视 = -X、右视 = +X、俯视 = +Y、仰视 = -Y。
+ * 俯视/仰视的 up 取 ∓Z，这样"正前方(+Z)"在俯视图里朝下、在仰视图里朝上，符合工程制图习惯。
+ */
 export const VIEW_PRESETS = {
-  iso: { label: '等轴测', dir: [1, -1, 0.8] },
-  front: { label: '正视', dir: [0, -1, 0] },
-  back: { label: '后视', dir: [0, 1, 0] },
-  left: { label: '左视', dir: [-1, 0, 0] },
-  right: { label: '右视', dir: [1, 0, 0] },
-  top: { label: '俯视', dir: [0, 0, 1] },
-  bottom: { label: '仰视', dir: [0, 0, -1] }
+  iso: { label: '等轴测', dir: [1.8, 1, 1], up: [0, 1, 0] },
+  front: { label: '正视', dir: [0, 0, 1], up: [0, 1, 0] },
+  back: { label: '后视', dir: [0, 0, -1], up: [0, 1, 0] },
+  left: { label: '左视', dir: [-1, 0, 0], up: [0, 1, 0] },
+  right: { label: '右视', dir: [1, 0, 0], up: [0, 1, 0] },
+  top: { label: '俯视', dir: [0, 1, 0], up: [0, 0, -1] },
+  bottom: { label: '仰视', dir: [0, -1, 0], up: [0, 0, 1] }
 }
 
 /** 背景色预设 */
@@ -365,17 +375,11 @@ export const modelViewer = {
     eye.x = center.x + (dx / len) * dist
     eye.y = center.y + (dy / len) * dist
     eye.z = center.z + (dz / len) * dist
-    if (Math.abs(dz) > 0.9) {
-      // 俯视 / 仰视：把 up 换成 Y 轴，避免视线与上方向共线
-      if (cam.up) {
-        cam.up.x = 0
-        cam.up.y = 1
-        cam.up.z = 0
-      }
-    } else if (cam.up) {
-      cam.up.x = 0
-      cam.up.y = 0
-      cam.up.z = 1
+    // 每个视角自带 up（见 VIEW_PRESETS 的注释），避免切视角时模型"莫名其妙转 90°"
+    if (cam.up && preset.up) {
+      cam.up.x = preset.up[0]
+      cam.up.y = preset.up[1]
+      cam.up.z = preset.up[2]
     }
     this._setCamera(cam)
     this._emit('viewChanged', key)

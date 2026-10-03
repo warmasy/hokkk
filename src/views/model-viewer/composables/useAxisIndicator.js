@@ -67,15 +67,15 @@ function ensureEl() {
   return true
 }
 
-// 把世界坐标轴方向转换成屏幕方向（相对 HUD 中心），
-// 返回 { x, y } 单位向量，或 null（该轴与视线接近平行时无法确定方向）
-function worldAxisToScreen(axis, camera, tmp) {
+// 把世界坐标轴方向转换到相机空间，
+// 返回 { x, y, len, z }：x/y 是屏幕方向的单位向量（len 很小时无意义），
+// z 是该轴在相机空间的深度（> 0 = 指向观察者，< 0 = 背向观察者）
+function projectAxis(axis, camera, tmp) {
   tmp.set(axis[0], axis[1], axis[2]).transformDirection(camera.matrixWorldInverse)
   const sx = tmp.x
   const sy = -tmp.y // 屏幕 y 向下
   const len = Math.hypot(sx, sy)
-  if (len < 1e-5) return null
-  return { x: sx / len, y: sy / len, visible: tmp.z < 0 }
+  return { x: len > 1e-5 ? sx / len : 0, y: len > 1e-5 ? sy / len : 0, len, z: tmp.z }
 }
 
 // 每帧绘制（单色线条风格，与 O3DV 工具栏按钮图标一致）
@@ -116,16 +116,38 @@ function draw() {
     ctx.lineCap = 'round'
     ctx.lineJoin = 'round'
     for (const a of AXES) {
-      const s = worldAxisToScreen(a.dir, camera, tmp)
-      if (!s) continue
+      const s = projectAxis(a.dir, camera, tmp)
+      // 朝向观察者（或与视线垂直）= 实线；背向观察者 = 半透明虚线
+      const toward = s.z > -1e-3
+      ctx.globalAlpha = toward ? 1 : 0.35
+
+      // 与视线几乎平行（正对着 / 背对着你）：画一个小圆点 + 标签，而不是整条线消失
+      if (s.len < 0.02) {
+        ctx.save()
+        ctx.strokeStyle = axisColor
+        ctx.fillStyle = axisColor
+        ctx.lineWidth = 1.6
+        ctx.setLineDash(toward ? [] : [3, 3])
+        ctx.beginPath()
+        ctx.arc(center, center, 3.4, 0, Math.PI * 2)
+        if (toward) ctx.fill()
+        else ctx.stroke()
+        ctx.restore()
+        ctx.font = 'bold 11px Quicksand, Arial, sans-serif'
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        ctx.fillStyle = axisColor
+        ctx.fillText(a.label, center, center - 15)
+        ctx.globalAlpha = 1
+        continue
+      }
+
       const endX = center + s.x * AXIS_PIXEL
       const endY = center + s.y * AXIS_PIXEL
-      // 朝向相机（可见）实线；背离相机（从背面看）半透明虚线
       ctx.save()
-      ctx.globalAlpha = s.visible ? 1 : 0.35
       ctx.strokeStyle = axisColor
       ctx.lineWidth = 1.6
-      ctx.setLineDash(s.visible ? [] : [3, 3])
+      ctx.setLineDash(toward ? [] : [3, 3])
       // 轴线
       ctx.beginPath()
       ctx.moveTo(center, center)
@@ -154,7 +176,7 @@ function draw() {
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
       ctx.fillStyle = axisColor
-      ctx.globalAlpha = s.visible ? 1 : 0.35
+      ctx.globalAlpha = toward ? 1 : 0.35
       ctx.fillText(a.label, lx, ly)
       ctx.globalAlpha = 1
     }
