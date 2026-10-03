@@ -4,6 +4,9 @@
   "description": "清玄侍：工作台式布局 + 功能区 + 三栏主体 + 状态栏",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",

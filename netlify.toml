@@ -1,0 +1,47 @@
+# Netlify 部署配置（清玄侍 · Vite + Vue 3 单页应用）
+# 仓库连到 Netlify 后，构建命令与发布目录会自动读这里，面板里不用再填。
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  # Vite 7 要求 Node ^20.19 || >=22.12；这里固定 22.x（与 package.json 的 engines.node 一致）
+  NODE_VERSION = "22"
+
+# 单页应用：未命中静态文件的路径全部交给 index.html（Vue Router history 模式必需）
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# 带内容哈希的构建产物：长期强缓存
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# 3D 引擎静态资源（文件名固定、体积大，约 31MB）：缓存一周，避免每次回源
+[[headers]]
+  for = "/o3dv/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/o3dv-site/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+# 入口 HTML 不缓存，保证发版后刷新即生效
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# 基础安全响应头
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"

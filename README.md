@@ -74,6 +74,20 @@ npm run preview  # 预览构建产物
   请求前缀 `/dev-api`；生产环境改 `.env.production` 的 `VITE_APP_BASE_API`。
 - `public/o3dv` 与 `public/o3dv-site` 是 3D 引擎的静态资源（约 31MB），**不要删**，否则「模型查看」打不开。
 
+### 部署（Netlify / 阿里云 ESA Pages）
+
+仓库里已经带了两个平台的开箱配置，都是"纯静态 SPA"：构建产物在 `dist/`，路由交给 Vue Router。
+
+| 平台 | 配置文件 | 关键内容 |
+| --- | --- | --- |
+| **Netlify** | [`netlify.toml`](netlify.toml) | `command = npm run build`、`publish = dist`、`NODE_VERSION = 22`、SPA 回退（`/* → /index.html 200`）、哈希产物强缓存 / `o3dv` 缓存一周 / `index.html` 不缓存、基础安全响应头 |
+| **阿里云 ESA（函数和 Pages）** | [`esa.jsonc`](esa.jsonc) | `buildCommand`、`assets.directory = ./dist`、`notFoundStrategy = singlePageApplication`（未命中的导航请求回退 `index.html` 并返回 200） |
+
+- **Node 版本**：两层都会读 `package.json` 的 `engines.node`（本仓库是 `>=22.12.0`，Vite 7 的要求）；ESA 以 `engines.node` 为准，Netlify 另外用 `NODE_VERSION = "22"` 固定大版本。
+- **ESA 的 `name`** 指目标 Pages 项目名（不存在会自动创建）：现在是 `hokkk`，想换成别的项目名就改这一行。
+- **环境变量**：两张平台都在各自控制台配置（ESA 的构建环境变量不在 `esa.jsonc` 里；本项目生产环境无需额外变量，`npm run build` 默认就是 production 模式）。
+- **部署到子路径**：如果站点不是挂在域名根目录，需要同时改 `vite.config.js` 的 `base` 和 `.env.production` 的 `VITE_APP_ROUTER_BASE`。
+
 ---
 
 ## 四、界面结构
