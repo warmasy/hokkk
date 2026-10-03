@@ -67,15 +67,20 @@ function ensureEl() {
   return true
 }
 
-// 把世界坐标轴方向转换到相机空间，
-// 返回 { x, y, len, z }：x/y 是屏幕方向的单位向量（len 很小时无意义），
-// z 是该轴在相机空间的深度（> 0 = 指向观察者，< 0 = 背向观察者）
+// 把世界坐标轴方向转换到相机空间（正交投影），
+// 返回 { x, y, len, z }：
+//   x / y = 该轴在屏幕上的**投影分量**（不做单位化！长度就是它在画面上的真实比例）
+//   len   = 投影长度（1 = 与视线垂直、完全展开；0 = 正对/背对镜头）
+//   z     = 相机空间深度（> 0 指向观察者，< 0 背向观察者）
+//
+// ⚠️ 这里刻意**不做"每根轴各自归一化"**：那样会把被压缩的轴拉回等长，
+// 轴的方向在接近正对镜头时还会剧烈抖动，三根轴之间的相对角度就"乱跳"了，
+// 看起来不像一个刚体坐标架。保持原始投影分量，三根轴就是一个整体。
 function projectAxis(axis, camera, tmp) {
   tmp.set(axis[0], axis[1], axis[2]).transformDirection(camera.matrixWorldInverse)
   const sx = tmp.x
   const sy = -tmp.y // 屏幕 y 向下
-  const len = Math.hypot(sx, sy)
-  return { x: len > 1e-5 ? sx / len : 0, y: len > 1e-5 ? sy / len : 0, len, z: tmp.z }
+  return { x: sx, y: sy, len: Math.hypot(sx, sy), z: tmp.z }
 }
 
 // 每帧绘制（单色线条风格，与 O3DV 工具栏按钮图标一致）
@@ -115,14 +120,21 @@ function draw() {
     const tmp = new (window.THREE.Vector3)()
     ctx.lineCap = 'round'
     ctx.lineJoin = 'round'
-    for (const a of AXES) {
-      const s = projectAxis(a.dir, camera, tmp)
+
+    // 先算三根轴的投影，再统一按「最长的那根 = AXIS_PIXEL」缩放：
+    // 这样三根轴的相对长度与夹角完全由投影决定（刚体坐标架），
+    // 而整体大小又不会在不同视角下忽大忽小。
+    const items = AXES.map((a) => ({ a, s: projectAxis(a.dir, camera, tmp) }))
+    const maxLen = Math.max(...items.map((it) => it.s.len), 1e-6)
+    const unit = AXIS_PIXEL / maxLen
+
+    for (const { a, s } of items) {
       // 朝向观察者（或与视线垂直）= 实线；背向观察者 = 半透明虚线
       const toward = s.z > -1e-3
       ctx.globalAlpha = toward ? 1 : 0.35
 
       // 与视线几乎平行（正对着 / 背对着你）：画一个小圆点 + 标签，而不是整条线消失
-      if (s.len < 0.02) {
+      if (s.len * unit < 3) {
         ctx.save()
         ctx.strokeStyle = axisColor
         ctx.fillStyle = axisColor
@@ -142,8 +154,11 @@ function draw() {
         continue
       }
 
-      const endX = center + s.x * AXIS_PIXEL
-      const endY = center + s.y * AXIS_PIXEL
+      // 轴线终点 = 投影分量 × 统一比例（不做单轴归一化，角度与长短都保持真实比例）
+      const endX = center + s.x * unit
+      const endY = center + s.y * unit
+      const ux = s.x / s.len // 仅用于画箭头与标签的朝向
+      const uy = s.y / s.len
       ctx.save()
       ctx.strokeStyle = axisColor
       ctx.lineWidth = 1.6
@@ -156,12 +171,12 @@ function draw() {
       // V 形线条箭头（与 O3DV 图标箭头同风格：两段线、圆头线帽，非实心填充）
       const ARR_LEN = 7   // 箭头伸出长度
       const ARR_W = 3.5   // 箭头两翼张开宽度
-      const tipX = endX + s.x * ARR_LEN
-      const tipY = endY + s.y * ARR_LEN
-      const backX = endX - s.x * 2
-      const backY = endY - s.y * 2
-      const px = -s.y
-      const py = s.x
+      const tipX = endX + ux * ARR_LEN
+      const tipY = endY + uy * ARR_LEN
+      const backX = endX - ux * 2
+      const backY = endY - uy * 2
+      const px = -uy
+      const py = ux
       ctx.beginPath()
       ctx.moveTo(tipX, tipY)
       ctx.lineTo(backX + px * ARR_W, backY + py * ARR_W)
@@ -170,8 +185,8 @@ function draw() {
       ctx.stroke()
       ctx.restore()
       // 字母标签：箭头尖端外沿方向偏移 7px，与轴同色（无光晕，简洁线条风格）
-      const lx = tipX + s.x * 7
-      const ly = tipY + s.y * 7
+      const lx = tipX + ux * 7
+      const ly = tipY + uy * 7
       ctx.font = 'bold 11px Quicksand, Arial, sans-serif'
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'

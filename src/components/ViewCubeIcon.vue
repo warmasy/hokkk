@@ -3,6 +3,7 @@
     <path
       v-for="p in polygons"
       :key="p.key"
+      :data-face="p.face || p.key"
       :d="p.d"
       :fill="p.fill === 'none' ? 'none' : 'currentColor'"
       :fill-opacity="p.fillOpacity"
@@ -98,7 +99,14 @@ const polygons = computed(() => {
 
   // 看不见的目标面：先画（这样立方体的轮廓线压在它上面），虚线 + 半透明
   if (target && !targetVisible) {
-    out.push({ key: 'target-hidden', d: toPath(target.v.map(project)), fill: '#fill', fillOpacity: 0.42, dashed: true })
+    out.push({
+      key: 'hidden-' + target.key,
+      face: target.key,
+      d: toPath(target.v.map(project)),
+      fill: '#fill',
+      fillOpacity: 0.42,
+      dashed: true
+    })
   }
   // 三个可见面：轮廓线；如果目标面就在其中，则实心涂黑
   for (const f of visible) {
