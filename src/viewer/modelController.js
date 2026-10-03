@@ -340,32 +340,20 @@ export const modelViewer = {
     return false
   },
 
-  /**
-   * 平滑移动到目标相机（走 O3DV 自带的 MoveCamera，和"适应屏幕 / 默认视角"同一套动画机制）。
-   * 目标结构：{ eye, center, up, fov }（普通对象即可，内部会转成引擎的 Coord3D / Camera）。
-   * 引擎或动画通道不可用时退回"直接设置"，保证功能不丢。
-   */
-  _moveCameraTo(target) {
-    const viewer = site()?.viewer
-    if (!viewer) return false
-    const E = engine()
-    const Camera = E?.Camera
-    const Coord3D = E?.Coord3D
-    if (Camera && Coord3D && viewer.navigation && typeof viewer.navigation.MoveCamera === 'function') {
+  /** 停止正在播放的视角动画（切到别的视角、或用户自己拖动时调用） */
+  _stopViewAnimation() {
+    if (this._viewAnimRaf) cancelAnimationFrame(this._viewAnimRaf)
+    this._viewAnimRaf = null
+    if (this._viewAnimCleanup) {
       try {
-        const cam = new Camera(
-          new Coord3D(target.eye.x, target.eye.y, target.eye.z),
-          new Coord3D(target.center.x, target.center.y, target.center.z),
-          new Coord3D(target.up.x, target.up.y, target.up.z),
-          target.fov
-        )
-        const steps = (viewer.settings && viewer.settings.animationSteps) || 40
-        viewer.navigation.MoveCamera(cam, steps)
-        return true
-      } catch (e) {
-        console.warn('[modelViewer] 视角动画失败，改为直接切换', e)
-      }
+        this._viewAnimCleanup()
+      } catch (e) { /* ignore */ }
+      this._viewAnimCleanup = null
     }
+  },
+
+  /** 直接用目标值设置相机（动画通道不可用时的兜底） */
+  _applyCameraDirect(target) {
     const cam0 = this._camera()
     if (!cam0?.eye || !cam0?.center || !cam0?.up) return false
     Object.assign(cam0.eye, target.eye)
@@ -373,6 +361,114 @@ export const modelViewer = {
     Object.assign(cam0.up, target.up)
     if (target.fov) cam0.fov = target.fov
     this._setCamera(cam0)
+    return true
+  },
+
+  /**
+   * 平滑转到目标相机 —— **绕模型走圆弧**，而不是把相机位置直线插过去。
+   *
+   * 为什么不用 O3DV 的 MoveCamera：它在相机位置上做线性插值，"俯视 ↔ 仰视"这种 180° 切换时
+   * 相机会**穿过模型中心**（距离一路缩到 0 再拉开），看起来只是画面忽大忽小，根本看不出在转。
+   *
+   * 这里改成球面插值相机朝向（四元数 slerp）：
+   *   - 相机始终落在以模型中心为心、半径 = 原距离的球面上 → 是"绕着模型转"；
+   *   - up 与朝向一起插值，转到目标时精确等于目标 up（不会在结尾"抖一下"）；
+   *   - 时长按转角自适应：≈400ms + 3ms/度（45°≈0.5s，90°≈0.7s，180°≈0.95s）；
+   *   - 用户一按鼠标就立即停下，不跟手动操作抢。
+   */
+  _moveCameraTo(target) {
+    const viewer = site()?.viewer
+    const cam = this._camera()
+    if (!viewer || !cam?.eye || !cam?.center || !cam?.up) return false
+    const THREE = window.THREE
+    const E = engine()
+    const Camera = E?.Camera
+    const Coord3D = E?.Coord3D
+    if (!THREE || !Camera || !Coord3D) return this._applyCameraDirect(target)
+
+    const start = {
+      center: { x: cam.center.x, y: cam.center.y, z: cam.center.z },
+      eye: { x: cam.eye.x, y: cam.eye.y, z: cam.eye.z },
+      up: { x: cam.up.x, y: cam.up.y, z: cam.up.z },
+      fov: cam.fov
+    }
+    const end = {
+      center: target.center || start.center,
+      eye: target.eye,
+      up: target.up || start.up,
+      fov: target.fov || start.fov
+    }
+    const startOffset = new THREE.Vector3(start.eye.x - start.center.x, start.eye.y - start.center.y, start.eye.z - start.center.z)
+    const endOffset = new THREE.Vector3(end.eye.x - end.center.x, end.eye.y - end.center.y, end.eye.z - end.center.z)
+    const d0 = startOffset.length()
+    const d1 = endOffset.length()
+    if (!(d0 > 0) || !(d1 > 0)) return this._applyCameraDirect(target)
+
+    // 相机姿态四元数：世界 (1,0,0)/(0,1,0)/(0,0,1) → (右 / 上 / 后)
+    const basisQuat = (offset, up) => {
+      const z = offset.clone().normalize() // 后方轴 = 模型中心指向相机
+      let x = new THREE.Vector3().crossVectors(up, z)
+      if (x.lengthSq() < 1e-8) x = new THREE.Vector3(1, 0, 0)
+      x.normalize()
+      const y = new THREE.Vector3().crossVectors(z, x).normalize()
+      return new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(x, y, z))
+    }
+    const q0 = basisQuat(startOffset, new THREE.Vector3(start.up.x, start.up.y, start.up.z))
+    const q1 = basisQuat(endOffset, new THREE.Vector3(end.up.x, end.up.y, end.up.z))
+    const turnDeg = THREE.MathUtils.radToDeg(q0.angleTo(q1))
+    // 转角很小（同一视角再点一次）就不来回扭了，直接到位
+    if (turnDeg < 0.5) return this._applyCameraDirect(target)
+    const duration = Math.max(420, Math.min(1100, 400 + turnDeg * 3))
+
+    this._stopViewAnimation()
+    const t0 = performance.now()
+    const lerp = (a, b, t) => a + (b - a) * t
+    const step = () => {
+      const p = Math.min(1, (performance.now() - t0) / duration)
+      const e = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2 // easeInOutQuad
+      const q = q0.clone().slerp(q1, e)
+      const back = new THREE.Vector3(0, 0, 1).applyQuaternion(q) // 相机相对中心的朝向
+      const up = new THREE.Vector3(0, 1, 0).applyQuaternion(q)
+      const center = {
+        x: lerp(start.center.x, end.center.x, e),
+        y: lerp(start.center.y, end.center.y, e),
+        z: lerp(start.center.z, end.center.z, e)
+      }
+      const dist = lerp(d0, d1, e) // 半径保持 → 是"绕模型转"，不会穿过模型
+      try {
+        viewer.SetCamera(
+          new Camera(
+            new Coord3D(center.x + back.x * dist, center.y + back.y * dist, center.z + back.z * dist),
+            new Coord3D(center.x, center.y, center.z),
+            new Coord3D(up.x, up.y, up.z),
+            end.fov
+          )
+        )
+        viewer.Render()
+      } catch (err) {
+        this._viewAnimRaf = null
+        return
+      }
+      if (p < 1) {
+        this._viewAnimRaf = requestAnimationFrame(step)
+      } else {
+        this._viewAnimRaf = null
+        if (this._viewAnimCleanup) {
+          this._viewAnimCleanup()
+          this._viewAnimCleanup = null
+        }
+      }
+    }
+
+    // 用户一按鼠标就停下（不然会和他自己的旋转/平移抢镜头）
+    let glCanvas = null
+    try { glCanvas = viewer.GetCanvas ? viewer.GetCanvas() : null } catch (e) { glCanvas = null }
+    const onPointerDown = () => this._stopViewAnimation()
+    if (glCanvas && glCanvas.addEventListener) {
+      glCanvas.addEventListener('pointerdown', onPointerDown, true)
+      this._viewAnimCleanup = () => glCanvas.removeEventListener('pointerdown', onPointerDown, true)
+    }
+    this._viewAnimRaf = requestAnimationFrame(step)
     return true
   },
 
@@ -482,10 +578,13 @@ export const modelViewer = {
       if (cam?.eye && cam?.center) {
         const { center, eye } = cam
         const a = 0.012
+        // 绕"世界的向上轴"转（本项目是 +Y）。原来绕的是 Z 轴，在 Y 向上的世界里
+        // 那等于让模型翻跟头（滚转），看起来像螺旋而不是转台。
         const x = eye.x - center.x
-        const y = eye.y - center.y
-        eye.x = center.x + x * Math.cos(a) - y * Math.sin(a)
-        eye.y = center.y + x * Math.sin(a) + y * Math.cos(a)
+        const z = eye.z - center.z
+        eye.x = center.x + x * Math.cos(a) + z * Math.sin(a)
+        eye.z = center.z - x * Math.sin(a) + z * Math.cos(a)
+        eye.y = center.y + (eye.y - center.y)
         this._setCamera(cam)
       }
       this._raf = requestAnimationFrame(step)
