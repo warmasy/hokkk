@@ -148,6 +148,16 @@
   width: 16px;
   text-align: center;
 }
+/* 视角按钮的立方体图标（SVG）：尺寸与字号图标对齐，颜色跟着按钮走 */
+.ribbon-btn svg.mc-cube {
+  width: 16px;
+  height: 14px;
+  color: var(--icon-color);
+  flex: none;
+}
+.ribbon-btn.active svg.mc-cube {
+  color: var(--accent);
+}
 .ribbon-btn.active i {
   color: var(--accent);
 }

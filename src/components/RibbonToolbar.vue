@@ -10,7 +10,8 @@
           @pointerdown="onItemPointerDown($event, item)"
           @click="onItemClick(item, $event)"
         >
-          <i :class="item.icon"></i><span>{{ item.label }}</span>
+          <ViewCubeIcon v-if="item.cube" :face="item.cube" /><i v-else :class="item.icon"></i
+          ><span>{{ item.label }}</span>
         </button>
       </div>
       <div class="ribbon-label">{{ group.label }}</div>
@@ -38,7 +39,8 @@
                 @pointerdown="onItemPointerDown($event, item)"
                 @click="onItemClick(item, $event)"
               >
-                <i :class="item.icon"></i><span>{{ item.label }}</span>
+                <ViewCubeIcon v-if="item.cube" :face="item.cube" /><i v-else :class="item.icon"></i
+                ><span>{{ item.label }}</span>
               </button>
             </div>
             <div class="ribbon-label">{{ group.label }}</div>
@@ -52,6 +54,7 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { groupsOfMenu } from '@/config/ribbon'
+import ViewCubeIcon from '@/components/ViewCubeIcon.vue'
 import { useWorkbenchStore } from '@/store/modules/workbench'
 import { beginPointerDrag, treeDropTarget } from '@/utils/pointerDrag'
 import { runViewerCommand } from '@/viewer/commands'

@@ -31,12 +31,14 @@ export const MODEL_VIEW_GROUP = {
   key: 'model-view-dir',
   label: '视角',
   items: [
-    { key: 'mv-iso', label: '等轴测', icon: 'fa-solid fa-cube', kind: 'action', action: 'viewer', command: 'view', args: { key: 'iso' }, tip: '切换到等轴测视角' },
-    { key: 'mv-front', label: '正视', icon: 'fa-solid fa-square', kind: 'action', action: 'viewer', command: 'view', args: { key: 'front' }, tip: '前视图' },
-    { key: 'mv-top', label: '俯视', icon: 'fa-solid fa-arrow-down-wide-short', kind: 'action', action: 'viewer', command: 'view', args: { key: 'top' }, tip: '俯视图' },
-    { key: 'mv-left', label: '左视', icon: 'fa-solid fa-arrow-left', kind: 'action', action: 'viewer', command: 'view', args: { key: 'left' }, tip: '左视图' },
-    { key: 'mv-right', label: '右视', icon: 'fa-solid fa-arrow-right', kind: 'action', action: 'viewer', command: 'view', args: { key: 'right' }, tip: '右视图' },
-    { key: 'mv-back', label: '后视', icon: 'fa-solid fa-square-full', kind: 'action', action: 'viewer', command: 'view', args: { key: 'back' }, tip: '后视图' },
+    // 视角按钮统一用轴测立方体图标：cube 指定「看哪一面」，该面会被涂黑（见 components/ViewCubeIcon.vue）
+    { key: 'mv-iso', label: '等轴测', icon: 'fa-solid fa-cube', cube: 'iso', kind: 'action', action: 'viewer', command: 'view', args: { key: 'iso' }, tip: '切换到等轴测视角（默认视角）' },
+    { key: 'mv-front', label: '正视', icon: 'fa-solid fa-square', cube: 'front', kind: 'action', action: 'viewer', command: 'view', args: { key: 'front' }, tip: '前视图（把立方体前面涂黑）' },
+    { key: 'mv-top', label: '俯视', icon: 'fa-solid fa-arrow-down-wide-short', cube: 'top', kind: 'action', action: 'viewer', command: 'view', args: { key: 'top' }, tip: '俯视图（把立方体上面涂黑）' },
+    { key: 'mv-left', label: '左视', icon: 'fa-solid fa-arrow-left', cube: 'left', kind: 'action', action: 'viewer', command: 'view', args: { key: 'left' }, tip: '左视图（把立方体左面涂黑）' },
+    { key: 'mv-right', label: '右视', icon: 'fa-solid fa-arrow-right', cube: 'right', kind: 'action', action: 'viewer', command: 'view', args: { key: 'right' }, tip: '右视图（把立方体右面涂黑）' },
+    { key: 'mv-back', label: '后视', icon: 'fa-solid fa-square-full', cube: 'back', kind: 'action', action: 'viewer', command: 'view', args: { key: 'back' }, tip: '后视图（把立方体后面涂黑）' },
+    { key: 'mv-bottom', label: '仰视', icon: 'fa-solid fa-arrow-up-wide-short', cube: 'bottom', kind: 'action', action: 'viewer', command: 'view', args: { key: 'bottom' }, tip: '仰视图（把立方体下面涂黑）' },
     { key: 'mv-fit', label: '适应屏幕', icon: 'fa-solid fa-expand', kind: 'action', action: 'viewer', command: 'fit', tip: '把模型缩放到刚好铺满视图' },
     { key: 'mv-rotate', label: '自动旋转', icon: 'fa-solid fa-rotate', kind: 'action', action: 'viewer', command: 'autoRotate', state: 'autoRotate', tip: '打开/关闭自动旋转' }
   ]
