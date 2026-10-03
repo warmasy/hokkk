@@ -340,25 +340,62 @@ export const modelViewer = {
     return false
   },
 
-  /** 标准视角：等轴测直接复用原项目的 SolidWorks 风格默认视角，其余按方向计算 */
+  /**
+   * 平滑移动到目标相机（走 O3DV 自带的 MoveCamera，和"适应屏幕 / 默认视角"同一套动画机制）。
+   * 目标结构：{ eye, center, up, fov }（普通对象即可，内部会转成引擎的 Coord3D / Camera）。
+   * 引擎或动画通道不可用时退回"直接设置"，保证功能不丢。
+   */
+  _moveCameraTo(target) {
+    const viewer = site()?.viewer
+    if (!viewer) return false
+    const E = engine()
+    const Camera = E?.Camera
+    const Coord3D = E?.Coord3D
+    if (Camera && Coord3D && viewer.navigation && typeof viewer.navigation.MoveCamera === 'function') {
+      try {
+        const cam = new Camera(
+          new Coord3D(target.eye.x, target.eye.y, target.eye.z),
+          new Coord3D(target.center.x, target.center.y, target.center.z),
+          new Coord3D(target.up.x, target.up.y, target.up.z),
+          target.fov
+        )
+        const steps = (viewer.settings && viewer.settings.animationSteps) || 40
+        viewer.navigation.MoveCamera(cam, steps)
+        return true
+      } catch (e) {
+        console.warn('[modelViewer] 视角动画失败，改为直接切换', e)
+      }
+    }
+    const cam0 = this._camera()
+    if (!cam0?.eye || !cam0?.center || !cam0?.up) return false
+    Object.assign(cam0.eye, target.eye)
+    Object.assign(cam0.center, target.center)
+    Object.assign(cam0.up, target.up)
+    if (target.fov) cam0.fov = target.fov
+    this._setCamera(cam0)
+    return true
+  },
+
+  /** 标准视角：等轴测直接复用原项目的 SolidWorks 风格默认视角，其余按方向计算（都带平滑动画） */
   setView(key) {
     // 等轴测 = 模型加载后的默认视角（原项目实现，保证点「等轴测」与默认显示完全一致）
     if (key === 'iso' && this._defaultCamera) {
       const d = this._defaultCamera
       const cam0 = this._camera()
       if (cam0?.eye && cam0?.center && cam0?.up) {
-        Object.assign(cam0.eye, d.eye)
-        Object.assign(cam0.center, d.center)
-        Object.assign(cam0.up, d.up)
-        if (d.fov) cam0.fov = d.fov
-        this._setCamera(cam0)
+        this._moveCameraTo({
+          eye: { ...d.eye },
+          center: { ...d.center },
+          up: { ...d.up },
+          fov: d.fov || cam0.fov
+        })
         this._emit('viewChanged', key)
         return true
       }
     }
     if (key === 'iso') {
       try {
-        setSolidWorksDefaultView(false)
+        setSolidWorksDefaultView(true) // true = 平滑过渡
         this._emit('viewChanged', key)
         return true
       } catch (e) {
@@ -372,16 +409,22 @@ export const modelViewer = {
     const len = Math.hypot(dx, dy, dz) || 1
     const { center, eye } = cam
     const dist = Math.hypot(eye.x - center.x, eye.y - center.y, eye.z - center.z) || 1
-    eye.x = center.x + (dx / len) * dist
-    eye.y = center.y + (dy / len) * dist
-    eye.z = center.z + (dz / len) * dist
-    // 每个视角自带 up（见 VIEW_PRESETS 的注释），避免切视角时模型"莫名其妙转 90°"
-    if (cam.up && preset.up) {
-      cam.up.x = preset.up[0]
-      cam.up.y = preset.up[1]
-      cam.up.z = preset.up[2]
+    const target = {
+      center: { x: center.x, y: center.y, z: center.z },
+      eye: {
+        x: center.x + (dx / len) * dist,
+        y: center.y + (dy / len) * dist,
+        z: center.z + (dz / len) * dist
+      },
+      // 每个视角自带 up（见 VIEW_PRESETS 的注释），避免切视角时模型"莫名其妙转 90°"
+      up: {
+        x: preset.up?.[0] ?? cam.up?.x ?? 0,
+        y: preset.up?.[1] ?? cam.up?.y ?? 1,
+        z: preset.up?.[2] ?? cam.up?.z ?? 0
+      },
+      fov: cam.fov
     }
-    this._setCamera(cam)
+    this._moveCameraTo(target)
     this._emit('viewChanged', key)
     return true
   },
