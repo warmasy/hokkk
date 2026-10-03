@@ -147,7 +147,6 @@
             <div class="chart-toolbar">
               <button title="放大" @click="zoomIn"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
               <button title="缩小" @click="zoomOut"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
-              <button title="适应屏幕" @click="fitView"><i class="fa-solid fa-expand"></i></button>
               <button title="重置视图" @click="resetView"><i class="fa-solid fa-rotate-right"></i></button>
               <button title="截图" @click="shot"><i class="fa-solid fa-camera"></i></button>
             </div>
@@ -206,7 +205,6 @@
             <div class="chart-toolbar">
               <button title="放大" @click="zoomIn"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
               <button title="缩小" @click="zoomOut"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
-              <button title="适应屏幕" @click="fitView"><i class="fa-solid fa-expand"></i></button>
               <button title="重置视图" @click="resetView"><i class="fa-solid fa-rotate-right"></i></button>
               <button title="截图" @click="shot"><i class="fa-solid fa-camera"></i></button>
             </div>
@@ -1249,11 +1247,7 @@ function zoomOut() {
   updateChart()
   workbench.setStatus('视图已缩小', 0)
 }
-function fitView() {
-  zoom.value = 1
-  updateChart()
-  workbench.setStatus('已适应屏幕', 0)
-}
+/** 重置视图：把显示比例恢复成 1:1（原来的「适应屏幕」与它完全等价，已删除） */
 function resetView() {
   zoom.value = 1
   updateChart()
